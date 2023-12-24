@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Game</title>
+    <link rel ="icon" type="image/x-icon" href="3286676.png">
+</head>
+ 
+    <style>
+        body {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            text-align: left;
+        }
+
+        h1{
+            font-size: 70px;
+            margin-top: 1px;
+        }
+
+        img{
+            width: 90px;
+            height: 90px;
+            padding: auto;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0%;
+            margin: 0 10px;
+        }
+        nav a:hover{
+            color: #ff0000;
+        }
+        h2{
+            font-size: 20px;
+        }
+        #aboutMe{
+            text-align: center;
+            font-family:"Comic Sans MS", cursive, sans-serif;
+            background-color:none   ;
+            margin-top: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+        } 
+        #contactMe{
+            text-align: center;
+            font-family:"Comic Sans MS", cursive, sans-serif ;
+            margin-top: 20px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }   
+        p {
+            text-align: center; 
+        }
+        p a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: #333; 
+        }
+        p a img {
+            width: 30px; 
+            height: auto;
+            margin-right: 10px; 
+        }
+        p a:hover {
+            color: #1877f2; 
+        }
+        .cell {
+            margin-top: 5px;
+            width: 100px; 
+            height: 100px;
+            border: 2px solid;
+            box-shadow: 0 0 0 3px;
+            line-height: 100px;
+            font-size: 60px; 
+        }
+        #gameContainer{
+            font-family:"Comic Sans MS", cursive, sans-serif;
+            text-align: center;
+        }
+
+        #cellContainer {
+            display: grid;
+            grid-template-columns: repeat(3, auto);
+            width: 300px; 
+            margin: auto;
+        }      
+        #restartBtn {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s; 
+        }
+        #restartBtn:hover {
+            background-color: #45a049; 
+        }       
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tic Tac Toe 
+            <img src="3286676.png">
+        </h1>
+        <h2>  
+            <nav>
+                <a href="#" onclick="showHome()">HOME</a>
+                <a href="#" onclick="showAbout()">ABOUT ME</a>
+                <a href="#" onclick="showContact()">CONTACT INFO</a>
+            </nav>
+        </h2>     
+    </header>
+    
+    <div id="gameContainer">
+        <div id="cellContainer">
+            <div cellIndex="0" class="cell"></div>
+            <div cellIndex="1" class="cell"></div>
+            <div cellIndex="2" class="cell"></div>
+            <div cellIndex="3" class="cell"></div>
+            <div cellIndex="4" class="cell"></div>
+            <div cellIndex="5" class="cell"></div>
+            <div cellIndex="6" class="cell"></div>
+            <div cellIndex="7" class="cell"></div>
+            <div cellIndex="8" class="cell"></div>
+        </div>       
+            <h3 id="statusText"></h3>
+            <button id="restartBtn">Restart</button>
+        
+        </div>
+
+    <div id="aboutMe" style="display:none;">
+        <h2>About Me:</h2>
+        <p>         Hello, I'm Rex Ian V. Dolaogon, a first-year Computer Science student at the University of Southern Mindanao (USM). 
+                This is the final activity this 1st semester in Introduction to Computing, I've crafted this simple yet engaging Tic Tac Toe website. 
+        </p>
+    </div>
+
+    <div id="contactMe" style="display:none;">
+        <h2>Contact Info</h2>
+            <p>
+                <a href="https://www.facebook.com/rexian.dolaogon.54/" target="_blank">
+                    <img src="pngtree-facebook-icon-png-image_9015416.png" alt="Facebook Icon">
+                                    Visit My Facebook Profile
+                </a>
+            </p>
+
+    </div>
+
+    <script>
+        //game
+        const cells = document.querySelectorAll(".cell");
+        const statusText = document.querySelector("#statusText");
+        const restartBtn = document.querySelector("#restartBtn");
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+        let options = ["", "", "", "", "", "", "", "", ""];
+        let currentPlayer = "X";
+        let running = false;
+
+        initializeGame();
+
+        function initializeGame(){
+            cells.forEach(cell => cell.addEventListener("click", cellClicked));
+            restartBtn.addEventListener("click", restartGame);
+            statusText.textContent = `${currentPlayer}'s turn`;
+            running = true;
+        }
+        function cellClicked(){
+            const cellIndex = this.getAttribute("cellIndex");
+
+            if(options[cellIndex] != "" || !running){
+                return;
+            }
+
+            updateCell(this, cellIndex);
+            checkWinner();
+        }
+        function updateCell(cell, index){
+            options[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+        }
+        function changePlayer(){
+            currentPlayer = (currentPlayer == "X") ? "O" : "X";
+            statusText.textContent = `${currentPlayer}'s turn`;
+        }
+        function checkWinner(){
+            let roundWon = false;
+
+            for(let i = 0; i < winConditions.length; i++){
+                const condition = winConditions[i];
+                const cellA = options[condition[0]];
+                const cellB = options[condition[1]];
+                const cellC = options[condition[2]];
+
+                if(cellA == "" || cellB == "" || cellC == ""){
+                    continue;
+                }
+                if(cellA == cellB && cellB == cellC){
+                    roundWon = true;
+                    break;
+                }
+            }
+
+            if(roundWon){
+                statusText.textContent = `${currentPlayer} wins!`;
+                running = false;
+            }
+            else if(!options.includes("")){
+                statusText.textContent = `Draw!`;
+                running = false;
+            }
+            else{
+                changePlayer();
+            }
+        }
+        function restartGame(){
+            currentPlayer = "X";
+            options = ["", "", "", "", "", "", "", "", ""];
+            statusText.textContent = `${currentPlayer}'s turn`;
+            cells.forEach(cell => cell.textContent = "");
+            running = true;
+        }
+        //Interface
+        function showHome(){
+            document.getElementById('gameContainer').style.display = 'block';
+            document.getElementById('aboutMe').style.display = 'none';
+            document.getElementById('contactMe').style.display = 'none';
+
+        }
+        function showAbout(){
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('aboutMe').style.display = 'block';
+            document.getElementById('contactMe').style.display = 'none';
+        }
+        function showContact(){
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('aboutMe').style.display = 'none';
+            document.getElementById('contactMe').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
